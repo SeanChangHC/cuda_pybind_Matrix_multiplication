@@ -1,0 +1,5 @@
+H:/277/cuda_pybind/build/CMakeFiles/matrix_mul_kernel.dir
+H:/277/cuda_pybind/build/CMakeFiles/cuda_matrix_mul.dir
+H:/277/cuda_pybind/build/CMakeFiles/ALL_BUILD.dir
+H:/277/cuda_pybind/build/CMakeFiles/ZERO_CHECK.dir
+H:/277/cuda_pybind/build/Src/kernel_debug/CMakeFiles/quiz.dir

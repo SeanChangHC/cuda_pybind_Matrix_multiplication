@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Src\kernel_debug\quiz.cu">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="H:\277\cuda_pybind\build\CMakeFiles\e3878b31fe2e3d5a9d8e549ce4f17b7e\quiz_intermediate_link.obj.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="H:\277\cuda_pybind\Src\kernel_debug\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="H:\277\cuda_pybind\build\Src\kernel_debug\CMakeFiles\quiz.dir\$(Configuration)\quiz_generated_quiz.cu.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+    <Object Include="H:\277\cuda_pybind\build\Src\kernel_debug\CMakeFiles\quiz.dir\$(Configuration)\quiz_intermediate_link.obj">
+      <Filter>Object Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{25FA45AE-1B52-3C3F-858C-D14FF44C8F55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Files">
+      <UniqueIdentifier>{524CAFA3-6A23-32FA-BF5A-7D219A8F8671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{9061E33E-A758-3132-B840-46FE8FC49CE3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.31/Modules/FindCUDA/run_nvcc.cmake
+H:/277/cuda_pybind/Src/kernel_debug/CMakeLists.txt
+H:/277/cuda_pybind/build/Src/kernel_debug/CMakeFiles/quiz.dir/quiz_generated_quiz.cu.obj.cmake.pre-gen
+H:/277/cuda_pybind/build/Src/kernel_debug/CMakeFiles/quiz.dir/quiz_generated_quiz.cu.obj.depend
