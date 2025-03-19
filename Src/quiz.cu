@@ -1,25 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>  // For memcpy function
 #include <math.h>
 #include <time.h>
-
-// CUDA-specific definitions for compilation without CUDA headers
-#ifndef __CUDACC__
-#define __device__
-#define __host__
-#define __global__
-#define __shared__
-#define __syncthreads()
-struct dim3 { unsigned int x, y, z; dim3(unsigned int x=1, unsigned int y=1, unsigned int z=1) : x(x), y(y), z(z) {} };
-struct cudaEvent_t { int dummy; };
-struct cudaStream_t { int dummy; };
-enum cudaMemcpyKind { cudaMemcpyHostToDevice, cudaMemcpyDeviceToHost };
-#define cudaStreamNonBlocking 0
-#define blockIdx threadIdx
-#define threadIdx blockIdx
-struct { dim3 x, y; } blockIdx, threadIdx;
-#endif
 
 // Block size for matrix multiplication kernel
 #define BLOCK_SIZE_16 16
@@ -32,12 +14,12 @@ struct { dim3 x, y; } blockIdx, threadIdx;
 template <int BLOCK_SIZE>
 __global__ void MatrixMulCUDA(float* C, float* A, float* B, int wA, int wB) {
 	// Block index
-	int bx = blockIdx.x.x;
-	int by = blockIdx.y.x;
+	int bx = blockIdx.x;
+	int by = blockIdx.y;
 
 	// Thread index
-	int tx = threadIdx.x.x;
-	int ty = threadIdx.y.x;
+	int tx = threadIdx.x;
+	int ty = threadIdx.y;
 
 	// Index of the first sub-matrix of A processed by the block
 	int aBegin = wA * BLOCK_SIZE * by;
@@ -63,11 +45,11 @@ __global__ void MatrixMulCUDA(float* C, float* A, float* B, int wA, int wB) {
 	for (int a = aBegin, b = bBegin; a <= aEnd; a += aStep, b += bStep) {
 		// Declaration of the shared memory array As used to
 		// store the sub-matrix of A
-		__shared__ float As[BLOCK_SIZE_32][BLOCK_SIZE_32];
+		__shared__ float As[BLOCK_SIZE][BLOCK_SIZE];
 
 		// Declaration of the shared memory array Bs used to
 		// store the sub-matrix of B
-		__shared__ float Bs[BLOCK_SIZE_32][BLOCK_SIZE_32];
+		__shared__ float Bs[BLOCK_SIZE][BLOCK_SIZE];
 
 		// Load the matrices from device memory
 		// to shared memory; each thread loads
@@ -118,25 +100,6 @@ void MatrixMulCPU(float* C, const float* A, const float* B, int wA, int hA, int 
 		}
 	}
 }
-
-// CUDA runtime function stubs for compilation without CUDA headers
-#ifndef __CUDACC__
-int cudaMallocHost(float** ptr, size_t size) { *ptr = (float*)malloc(size); return 0; }
-int cudaMalloc(void** ptr, size_t size) { *ptr = malloc(size); return 0; }
-int cudaFreeHost(void* ptr) { free(ptr); return 0; }
-int cudaFree(void* ptr) { free(ptr); return 0; }
-int cudaEventCreate(cudaEvent_t* event) { return 0; }
-int cudaStreamCreateWithFlags(cudaStream_t* stream, unsigned int flags) { return 0; }
-int cudaMemcpyAsync(void* dst, const void* src, size_t count, cudaMemcpyKind kind, cudaStream_t stream) { 
-	memcpy(dst, src, count); return 0; 
-}
-int cudaStreamSynchronize(cudaStream_t stream) { return 0; }
-int cudaEventRecord(cudaEvent_t event, cudaStream_t stream) { return 0; }
-int cudaEventSynchronize(cudaEvent_t event) { return 0; }
-int cudaEventElapsedTime(float* ms, cudaEvent_t start, cudaEvent_t stop) { *ms = 0.1f; return 0; }
-int cudaEventDestroy(cudaEvent_t event) { return 0; }
-int cudaStreamDestroy(cudaStream_t stream) { return 0; }
-#endif
 
 /**
  * Run a simple test of matrix multiplication using CUDA
@@ -195,8 +158,6 @@ int MatrixMultiply(int argc, char** argv, int block_size, const dim3& dimsA, con
 	// Create and start timer
 	printf("Computing result using CUDA Kernel...\n");
 
-	// Dummy function call to simulate CUDA kernel launch since we can't actually call it here
-	#ifdef __CUDACC__
 	// Performs warmup operation using matrixMul CUDA kernel
 	if (block_size == 16) {
 		MatrixMulCUDA<BLOCK_SIZE_16><<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
@@ -204,7 +165,6 @@ int MatrixMultiply(int argc, char** argv, int block_size, const dim3& dimsA, con
 	else {
 		MatrixMulCUDA<BLOCK_SIZE_32><<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
 	}
-	#endif
 
 	printf("done\n");
 	cudaStreamSynchronize(stream);
@@ -215,7 +175,6 @@ int MatrixMultiply(int argc, char** argv, int block_size, const dim3& dimsA, con
 	// Execute the kernel
 	int nIter = 300;
 
-	#ifdef __CUDACC__
 	for (int j = 0; j < nIter; j++) {
 		if (block_size == 16) {
 			MatrixMulCUDA<BLOCK_SIZE_16><<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
@@ -224,7 +183,6 @@ int MatrixMultiply(int argc, char** argv, int block_size, const dim3& dimsA, con
 			MatrixMulCUDA<BLOCK_SIZE_32><<<grid, threads, 0, stream>>>(d_C, d_A, d_B, dimsA.x, dimsB.x);
 		}
 	}
-	#endif
 
 	// Record the stop event
 	cudaEventRecord(stop, stream);
